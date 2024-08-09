@@ -1,0 +1,236 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+local Window = Rayfield:CreateWindow({
+    Name = "Jscripts | Universal Hub",
+    LoadingTitle = "@JscriptsRBLX on YouTube",
+    LoadingSubtitle = "by Jscripts",
+    ConfigurationSaving = {
+       Enabled = true,
+       FileName = "Jscripts Hub"
+    },
+    Discord = {
+       Enabled = false,
+       Invite = "noinvitelink",
+       RememberJoins = true
+    },
+    KeySystem = false
+})
+
+-- Debug notification
+Rayfield:Notify({
+    Title = "⚠️ Debug Notice",
+    Content = "Script loaded successfully.",
+    Duration = 3,
+    Image = 4483362458
+})
+
+-- Notifications
+Rayfield:Notify({
+    Title = "⚠️ Notice",
+    Content = "This script will not always bypass Anti-Cheat, so use this with caution. This script is recommended to be used on an Alt.",
+    Duration = 6.5,
+    Image = 4483362458,
+    Actions = { 
+        Ignore = { Name = "Okay!", Callback = function() print("The user tapped Okay!") end }
+    }
+})
+
+Rayfield:Notify({
+    Title = "⚠️ Second Notice",
+    Content = "Hubs for separate games will be in separate hubs to prevent lag on your device, thank you for using this Hub.",
+    Duration = 6.5,
+    Image = 4483362458,
+    Actions = { 
+        Ignore = { Name = "Okay!", Callback = function() print("The user tapped Okay!") end }
+    }
+})
+
+-- Create Character Tab
+local CharacterTab = Window:CreateTab("Character", 4483362458)
+local CharacterSection = CharacterTab:CreateSection("Humanoid Values")
+
+local player = game:GetService("Players").LocalPlayer
+
+-- Function to update humanoid properties
+local function updateHumanoid(property, value)
+    local humanoid = player.Character and player.Character:FindFirstChild("Humanoid")
+    if humanoid then
+        humanoid[property] = value
+    end
+end
+
+-- Create Speed Slider
+local speedSlider = CharacterTab:CreateSlider({
+    Name = "Speed",
+    Range = {0, 100},
+    Increment = 1,
+    Suffix = "Speed Value",
+    CurrentValue = 16,
+    Flag = "Speed1",
+    Callback = function(value) updateHumanoid("WalkSpeed", value) end
+})
+
+-- Create Jump Power Slider
+local jumpPowerSlider = CharacterTab:CreateSlider({
+    Name = "Jump Power",
+    Range = {0, 100},
+    Increment = 1,
+    Suffix = "Power Value",
+    CurrentValue = 50,
+    Flag = "JumpPower1",
+    Callback = function(value) updateHumanoid("JumpPower", value) end
+})
+
+-- Handle character respawn and death
+player.CharacterAdded:Connect(function(character)
+    local humanoid = character:WaitForChild("Humanoid")
+    updateHumanoid("WalkSpeed", speedSlider.CurrentValue)
+    updateHumanoid("JumpPower", jumpPowerSlider.CurrentValue)
+    
+    humanoid.Died:Connect(function()
+        speedSlider:SetValue(16)
+        jumpPowerSlider:SetValue(50)
+    end)
+end)
+
+-- Initial setup
+if player.Character then
+    updateHumanoid("WalkSpeed", speedSlider.CurrentValue)
+    updateHumanoid("JumpPower", jumpPowerSlider.CurrentValue)
+end
+
+-- Create Universal Scripts Tab
+local UniversalScriptsTab = Window:CreateTab("Universal Scripts", 4483362458)
+local MainHubsSection = UniversalScriptsTab:CreateSection("Main Hubs")
+
+-- Debugging: Check if Tab and Section are created
+print("UniversalScriptsTab created:", UniversalScriptsTab)
+print("MainHubsSection created:", MainHubsSection)
+
+-- Create Infinite Yield Reborn Button
+local success, result = pcall(function()
+    if MainHubsSection then
+        -- Check if CreateButton is available
+        local buttonCreated = false
+        if MainHubsSection.CreateButton then
+            local infiniteYieldButton = MainHubsSection:CreateButton({
+                Name = "Infinite Yield Reborn",
+                Callback = function()
+                    -- Execute the loadstring command
+                    loadstring(game:HttpGet("https://github.com/fuckusfm/infiniteyield-reborn/raw/master/source"))()
+                    
+                    -- Show the notification
+                    Rayfield:Notify({
+                        Title = "Infinite Yield Reborn",
+                        Content = "IY But more maintained with greatest amount of stupidity",
+                        Duration = 6.5,
+                        Image = 4483362458,
+                        Actions = {
+                            Ignore = {
+                                Name = "Okay!",
+                                Callback = function() print("The user tapped Okay!") end
+                            }
+                        }
+                    })
+                end
+            })
+            
+            buttonCreated = true
+            -- Debugging: Check if the button was created
+            print("Infinite Yield Reborn button created:", infiniteYieldButton)
+        else
+            warn("CreateButton method is missing.")
+            Rayfield:Notify({
+                Title = "Error",
+                Content = "CreateButton method is missing in MainHubsSection.",
+                Duration = 6.5,
+                Image = 4483362458
+            })
+        end
+
+        -- Report if the button creation failed
+        if not buttonCreated then
+            Rayfield:Notify({
+                Title = "Error",
+                Content = "Failed to create Infinite Yield Reborn button.",
+                Duration = 6.5,
+                Image = 4483362458
+            })
+        end
+    else
+        warn("MainHubsSection is missing.")
+        Rayfield:Notify({
+            Title = "Error",
+            Content = "Failed to create Infinite Yield Reborn button.",
+            Duration = 6.5,
+            Image = 4483362458
+        })
+    end
+end)
+
+if not success then
+    warn("Failed to create Infinite Yield Reborn button:", result)
+    Rayfield:Notify({
+        Title = "Error",
+        Content = "Failed to create Infinite Yield Reborn button.",
+        Duration = 6.5,
+        Image = 4483362458
+    })
+end
+
+-- Track server start time
+local serverStartTime = tick()
+
+-- Function to format uptime
+local function formatUptime(seconds)
+    local hours = math.floor(seconds / 3600)
+    local minutes = math.floor((seconds % 3600) / 60)
+    local secs = math.floor(seconds % 60)
+    return string.format("%02d:%02d:%02d", hours, minutes, secs)
+end
+
+-- Create Game Information Tab
+local GameTab = Window:CreateTab("Game", 4483362458)
+local InfoSection = GameTab:CreateSection("Information")
+
+-- Create Game ID and Version Paragraphs
+local gameIdParagraph = GameTab:CreateParagraph({
+    Title = "Game ID",
+    Content = tostring(game.PlaceId) -- Displays the current game ID
+})
+
+local gameVersion = "1.0.0" -- Replace with the actual version retrieval if needed
+
+local gameVersionParagraph = GameTab:CreateParagraph({
+    Title = "Game Version",
+    Content = "ver: " .. gameVersion -- Displays the current game version
+})
+
+-- Create Server Uptime Paragraph
+local serverUptimeParagraph = GameTab:CreateParagraph({
+    Title = "Server Uptime",
+    Content = "Uptime: " .. formatUptime(0) -- Initial content
+})
+
+-- Update server uptime every second
+local lastUpdate = tick()
+local updateInterval = 1 -- Update every second
+
+game:GetService("RunService").Heartbeat:Connect(function()
+    local now = tick()
+    if now - lastUpdate >= updateInterval then
+        local uptime = now - serverStartTime
+        serverUptimeParagraph.Content = "Uptime: " .. formatUptime(uptime)
+        lastUpdate = now
+    end
+end)
+
+-- Create a button to destroy the interface
+local destroyButton = GameTab:CreateButton({
+    Name = "Destroy Interface",
+    Callback = function()
+        Rayfield:Destroy() -- Destroys the entire interface
+    end
+})
+
+Rayfield:LoadConfiguration()
